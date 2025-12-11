@@ -1,4 +1,4 @@
-const API_SECRET = ""; // TODO: add secret
+const API_SECRET = ""; // TODO: Set secret
 
 function populate() {
 	const file = SpreadsheetApp.openById("1quInsbRZ2HytcKDD3Ahhl7eGV9JdZUM3khRhvm6xneE");
@@ -56,18 +56,15 @@ function populate() {
 			currentRow += 19;
 		}
 	}
-	// TODO: update url
-	const response = UrlFetchApp.fetch(
-		"https://itl-classrooms.pilcrowonpaper1767.workers.dev/populate-data",
-		{
-			method: "post",
-			payload: JSON.stringify(resultJSONObject),
-			contentType: "application/json",
-			headers: {
-				Secret: API_SECRET,
-			},
+	// TODO: Update URL
+	const response = UrlFetchApp.fetch("https://itl-classrooms.gdgoc-chuo.com/populate-data", {
+		method: "post",
+		payload: JSON.stringify(resultJSONObject),
+		contentType: "application/json",
+		headers: {
+			Secret: API_SECRET,
 		},
-	);
+	});
 	const responseStatus = response.getResponseCode();
 	const responseOk = responseStatus >= 200 && responseStatus < 300;
 	if (!responseOk) {
