@@ -1,0 +1,29 @@
+* {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	border: none;
+	appearance: none;
+	font-size: 1rem;
+	font-weight: normal;
+}
+
+html {
+	font-family: "SF Mono", "Operator Mono", "Roboto Mono", "Menlo", "Monaco", "Consolas", monospace;
+	font-size: 1rem;
+	--accent-color: #cf0100;
+	--background-color: white;
+	--secondary-background-color: rgb(214, 214, 214);
+	--text-color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		--accent-color: #ff8181;
+		--background-color: #0e0e0e;
+		--secondary-background-color: #272727;
+		--text-color: #eaeaea;
+		background-color: var(--background-color);
+		color: var(--text-color);
+	}
+}

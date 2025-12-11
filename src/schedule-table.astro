@@ -1,0 +1,162 @@
+---
+import "@src/global.css";
+
+import { type Schedule, rooms } from "./schedule.js";
+
+const { schedule, timestamp } = Astro.props;
+
+interface Props {
+	schedule: Schedule;
+	timestamp: Date;
+}
+
+const seconds = Math.max((Date.now() - timestamp.getTime()) / 1000, 0);
+let lastUpdatedAtText: string;
+if (seconds < 60) {
+	lastUpdatedAtText = `${Math.trunc(seconds)}秒`;
+} else {
+	lastUpdatedAtText = `${Math.round(seconds / 60)}分`;
+}
+---
+
+<div style="width: 100%; padding-bottom: 2rem;">
+	<p style="padding-bottom: 0.5rem;">更新：{lastUpdatedAtText}前</p>
+	<div style="overflow: auto; overscroll-behavior-x: none; border: solid 1px var(--text-color);">
+		<table style="white-space: nowrap; table-layout:fixed; width: 100%; border-spacing: 0;">
+			<thead>
+				<tr>
+					<th style="position: sticky; left: 0;">教室</th>
+					<th>1限前</th>
+					<th>1限</th>
+					<th>2限</th>
+					<th>昼休み</th>
+					<th>3限</th>
+					<th>4限</th>
+					<th>5限</th>
+					<th>6限</th>
+					<th>6限後</th>
+				</tr></thead
+			>
+			<tbody>
+				{
+					rooms.map((room) => {
+						return (
+							<tr>
+								<th>{room}</th>
+								<td
+									class:list={[schedule[room][0] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][0] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][0] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][1] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][1] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][1] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][2] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][2] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][2] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][3] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][3] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][3] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][4] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][4] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][4] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][5] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][5] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][5] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][6] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][6] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][6] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][7] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][7] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][7] ? "✕" : "◯"}
+								</td>
+								<td
+									class:list={[schedule[room][8] ? "used-cell" : "open-cell"]}
+									aria-label={schedule[room][8] ? "利用不可" : "利用可"}
+								>
+									{schedule[room][8] ? "✕" : "◯"}
+								</td>
+							</tr>
+						);
+					})
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<style>
+	td.used-cell {
+		background-color: rgb(247, 116, 116);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		td.used-cell {
+			background-color: rgb(166, 38, 38);
+		}
+	}
+
+	thead th {
+		height: 2rem;
+		background-color: var(--secondary-background-color);
+		color: var(--text-color);
+		max-width: 5rem;
+		width: 4rem;
+		font-weight: bold;
+		text-align: center;
+	}
+
+	tbody th {
+		height: 2rem;
+		max-width: 5rem;
+		width: 4rem;
+		background-color: var(--background-color);
+		text-align: center;
+		position: sticky;
+		left: 0;
+	}
+
+	th,
+	td {
+		border-right: solid 1px var(--text-color);
+		border-bottom: solid 1px var(--text-color);
+	}
+
+	td:last-child,
+	th:last-child {
+		border-right: none;
+	}
+
+	tbody tr:last-child th,
+	tbody tr:last-child td {
+		border-bottom: none;
+	}
+
+	td {
+		height: 2rem;
+		max-width: 5rem;
+		width: 4rem;
+		text-align: center;
+	}
+</style>

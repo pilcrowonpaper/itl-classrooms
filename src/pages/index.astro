@@ -1,0 +1,236 @@
+---
+import "@src/global.css";
+
+import {
+	validateRequestSession,
+	setAuthCookies,
+	setBlankAuthCookies,
+	type Session,
+} from "@src/auth.js";
+import { getScheduleRecord, type ScheduleRecord } from "@src/schedule.js";
+import { parseNumberStringWithLeadingZeros, formatNumberWithLeadingZeros } from "@src/string.js";
+
+import ScheduleTable from "@src/schedule-table.astro";
+
+let session: Session | null;
+try {
+	session = await validateRequestSession(Astro);
+} catch (e) {
+	const error = new Error("Failed to validate request session", {
+		cause: e,
+	});
+	console.log(error);
+	return new Response("予期しないエラーが発生しました。もう一度お試しください。", {
+		status: 500,
+	});
+}
+
+if (session === null) {
+	setBlankAuthCookies(Astro);
+	return Astro.redirect("/login", 303);
+}
+setAuthCookies(Astro, session);
+
+// This is fine for Japan since it doesn't have daylight saving etc.
+const now = new Date(Date.now() + 9 * 60 * 60 * 1000);
+const today: YearMonthDay = {
+	year: now.getUTCFullYear(),
+	month: now.getUTCMonth() + 1,
+	day: now.getUTCDate(),
+};
+
+const date = getDate() ?? today;
+
+let scheduleRecord: ScheduleRecord | null = null;
+if (!isPastDate(date)) {
+	try {
+		scheduleRecord = await getScheduleRecord(
+			Astro.locals.runtime.env,
+			date.year,
+			date.month,
+			date.day,
+		);
+	} catch (e) {
+		const error = new Error("Failed to get schedule", {
+			cause: e,
+		});
+		console.log(error);
+		return new Response("予期しないエラーが発生しました。もう一度お試しください。", {
+			status: 500,
+		});
+	}
+}
+
+function getDate(): YearMonthDay | null {
+	const value = Astro.url.searchParams.get("date");
+	if (value === null) {
+		return null;
+	}
+	const parts = value.split("-");
+	if (parts.length !== 3) {
+		return null;
+	}
+	const year = parseNumberStringWithLeadingZeros(parts[0], 4);
+	const month = parseNumberStringWithLeadingZeros(parts[1], 2);
+	const day = parseNumberStringWithLeadingZeros(parts[2], 2);
+	if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day)) {
+		return null;
+	}
+
+	if (year < 1) {
+		return null;
+	}
+	if (month < 1 || month > 12) {
+		return null;
+	}
+	if (day < 1 || day > 100) {
+		return null;
+	}
+
+	const date: YearMonthDay = {
+		year,
+		month,
+		day,
+	};
+	return date;
+}
+
+interface YearMonthDay {
+	year: number;
+	month: number;
+	day: number;
+}
+
+function formatHTMLDate(date: YearMonthDay): string {
+	const year = formatNumberWithLeadingZeros(date.year, 4);
+	const month = formatNumberWithLeadingZeros(date.month, 2);
+	const day = formatNumberWithLeadingZeros(date.day, 2);
+	return `${year}-${month}-${day}`;
+}
+
+function isPastDate(date: YearMonthDay): boolean {
+	return date.year <= today.year && date.month <= today.month && date.day < today.day;
+}
+---
+
+<html lang="en" style="height:100%;">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>iTL classrooms</title>
+
+		<meta
+			property="description"
+			content="中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。"
+		/>
+
+		<!-- OpenGraph tags -->
+		<meta property="og:title" content="iTL classrooms" />
+		<meta
+			property="og:description"
+			content="中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。"
+		/>
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="en" />
+		<meta property="og:site_name" content="iTL classrooms" />
+		<meta property="og:url" content="https://itl-classrooms.gdgoc-chuo.com" />
+		<meta
+			property="og:image"
+			content="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,h_256,q_auto:good,w_256/v1/gcs/platform-data-goog/contentbuilder/GDG_Bevy_Favicon_y29LtMy.png"
+		/>
+
+		<!-- Twitter tags -->
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="iTL classrooms" />
+
+		<!-- Discord -->
+		<meta name="theme-color" content="#cf0100" />
+	</head>
+	<body style="min-height: 100%; display: grid; grid-template-rows: 1fr auto;">
+		<main
+			style="max-width: 50rem; margin: auto; padding-top: 2rem; height: 100%; width:100%; overflow: hidden;"
+		>
+			<h1>iTL classrooms</h1>
+			<p style="padding-bottom: 1rem;">
+				中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。
+			</p>
+			<form style="padding-bottom: 2rem;">
+				<label for="date-input">日付</label>
+				<input type="date" name="date" required id="date-input" value={formatHTMLDate(date)} />
+				<button
+					style="background-color: var(--text-color); color: var(--background-color); min-width: 5rem; padding: 0.5rem 1rem;"
+					>検索</button
+				>
+			</form>
+			<section style="padding-bottom: 2rem;">
+				<h2>{date.year}年{date.month}月{date.day}日の空き状況</h2>
+				{
+					scheduleRecord !== null ? (
+						<ScheduleTable
+							schedule={scheduleRecord.schedule}
+							timestamp={scheduleRecord.timestamp}
+						/>
+					) : (
+						<p>データが見つかりませんでした。</p>
+					)
+				}
+			</section>
+		</main>
+		<footer style="max-width: 50rem; margin: auto; padding: 2rem 0; width:100%;">
+			<p>
+				運営：<a
+					href="https://gdgoc-chuo.com"
+					target="_blank"
+					style="color: var(--accent-color); text-decoration: underline;">GDGoC Chuo University</a
+				>
+			</p>
+		</footer>
+	</body>
+</html>
+
+<style>
+	#date-input {
+		border: solid 1px var(--text-color);
+		background-color: var(--background-color);
+		color: var(--text-color);
+		padding: 0.5rem;
+	}
+
+	body {
+		padding: 0rem 2rem;
+	}
+
+	@media (max-width: 40rem) {
+		body {
+			padding: 0rem 1rem;
+		}
+	}
+
+	h1 {
+		font-size: 2.5rem;
+		margin-bottom: 2rem;
+		font-weight: bold;
+	}
+
+	@media (max-width: 40rem) {
+		h1 {
+			margin-bottom: 1.5rem;
+			font-size: 2rem;
+		}
+	}
+
+	h2 {
+		font-size: 1.5rem;
+		margin-bottom: 1rem;
+		font-weight: bold;
+	}
+
+	@media (max-width: 40rem) {
+		h2 {
+			margin-bottom: 1.5rem;
+			font-size: 1.5rem;
+		}
+	}
+</style>

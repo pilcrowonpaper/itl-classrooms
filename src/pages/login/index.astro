@@ -1,0 +1,128 @@
+---
+import "@src/global.css";
+
+import * as astro_assets from "astro:assets";
+import ScreenshotImage from "@src/assets/screenshot.jpg";
+
+import {
+	validateRequestSession,
+	setAuthCookies,
+	setBlankAuthCookies,
+	type Session,
+} from "@src/auth.js";
+
+let session: Session | null;
+try {
+	session = await validateRequestSession(Astro);
+} catch (e) {
+	const error = new Error("Failed to validate request session", {
+		cause: e,
+	});
+	console.log(error);
+	return new Response("予期しないエラーが発生しました。もう一度お試しください。", {
+		status: 500,
+	});
+}
+if (session !== null) {
+	setAuthCookies(Astro, session);
+	return Astro.redirect("/", 303);
+}
+setBlankAuthCookies(Astro);
+---
+
+<html lang="en" style="height: 100%;">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>iTL classrooms</title>
+
+		<meta
+			property="description"
+			content="中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。"
+		/>
+
+		<!-- OpenGraph tags -->
+		<meta property="og:title" content="iTL classrooms" />
+		<meta
+			property="og:description"
+			content="中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。"
+		/>
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="en" />
+		<meta property="og:site_name" content="iTL classrooms" />
+		<meta property="og:url" content="https://itl-classrooms.gdgoc-chuo.com" />
+		<meta
+			property="og:image"
+			content="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,h_256,q_auto:good,w_256/v1/gcs/platform-data-goog/contentbuilder/GDG_Bevy_Favicon_y29LtMy.png"
+		/>
+
+		<!-- Twitter tags -->
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="iTL classrooms" />
+
+		<!-- Discord -->
+		<meta name="theme-color" content="#cf0100" />
+	</head>
+	<body style="min-height: 100%; display: grid; grid-template-rows: 1fr auto;">
+		<main style="max-width: 50rem; margin: auto; padding-top: 2rem; height: 100%; width:100%;">
+			<h1>iTL classrooms</h1>
+			<p style="margin-bottom: 1rem;">
+				中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。
+			</p>
+			<div>
+				<astro_assets.Image
+					src={ScreenshotImage}
+					alt="教室の空き状況を表示する本サイトの一覧テーブル"
+					style="height: auto; width: 100%; margin-bottom: 2rem; background-color: var(--secondary-background-color); border: solid 1px var(--text-color); box-sizing: border-box;"
+				/>
+			</div>
+			<p style="
+				margin-bottom:
+				1rem;">
+				本サイトを利用するには中央大学の Google
+				アカウントでログインする必要があります。メールアドレスはユーザー確認の目的にのみ使用され、保存されません。
+			</p>
+			<a
+				href="/login/google"
+				style="display:inline-block;background-color: var(--text-color); color: var(--background-color); min-width: 5rem; padding: 0.5rem 1rem;"
+				>Sign in with Google</a
+			>
+		</main>
+		<footer style="max-width: 50rem; margin: auto; padding: 2rem 0; width:100%;">
+			<p>
+				運営：<a
+					href="https://gdgoc-chuo.com"
+					target="_blank"
+					style="color: var(--accent-color); text-decoration: underline;">GDGoC Chuo University</a
+				>
+			</p>
+		</footer>
+	</body>
+</html>
+
+<style>
+	body {
+		padding: 0 2rem;
+	}
+
+	@media (max-width: 40rem) {
+		body {
+			padding: 0 1rem;
+		}
+	}
+
+	h1 {
+		font-size: 2.5rem;
+		margin-bottom: 2rem;
+		font-weight: bold;
+	}
+
+	@media (max-width: 40rem) {
+		h1 {
+			margin-bottom: 1.5rem;
+			font-size: 2rem;
+		}
+	}
+</style>

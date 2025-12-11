@@ -1,0 +1,24 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"main": "dist/_worker.js/index.js",
+	"name": "itl-classrooms",
+	"compatibility_date": "2025-12-09",
+	"compatibility_flags": ["global_fetch_strictly_public"],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./dist",
+	},
+	"observability": {
+		"enabled": true,
+	},
+	"kv_namespaces": [
+		{
+			"binding": "STORAGE",
+			"id": "0bdf8f1a8e48460f86cdb53a20b4318f",
+		},
+	],
+	"vars": {
+		"GOOGLE_OAUTH_CLIENT_ID": "115411367384-0fk3f7k4s2temaeaolb7vgguel0sftmf.apps.googleusercontent.com",
+		"GOOGLE_OAUTH_REDIRECT_URI": "https://itl-classrooms.gdgoc-chuo.com/login/google/callback",
+	},
+}

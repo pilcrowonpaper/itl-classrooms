@@ -1,0 +1,25 @@
+{
+	"name": "itl-classrooms",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"types": "wrangler types",
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro",
+		"format": "prettier -w ."
+	},
+	"dependencies": {
+		"@astrojs/cloudflare": "^12.6.12",
+		"@astrojs/vercel": "^9.0.2",
+		"@oslojs/encoding": "^1.1.0",
+		"@vercel/functions": "^3.3.4",
+		"astro": "^5.16.4"
+	},
+	"devDependencies": {
+		"prettier": "^3.7.4",
+		"prettier-plugin-astro": "^0.14.1",
+		"wrangler": "^4.53.0"
+	}
+}
