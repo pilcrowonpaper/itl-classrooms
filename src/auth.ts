@@ -37,7 +37,7 @@ export async function signGoogleRefreshToken(
 	return new Uint8Array(signatureBuffer);
 }
 
-export async function verifyGoogleRefreshToken(
+export async function verifyGoogleRefreshTokenSignature(
 	env: Env,
 	signature: Uint8Array<any>,
 	googleRefreshToken: string,
@@ -160,7 +160,7 @@ async function validateRequestGoogleRefreshTokenSignature(
 		return null;
 	}
 
-	const signatureValid = await verifyGoogleRefreshToken(
+	const signatureValid = await verifyGoogleRefreshTokenSignature(
 		context.locals.runtime.env,
 		signature,
 		googleRefreshToken,
