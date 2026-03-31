@@ -1,8 +1,7 @@
-import * as astro from "astro";
+import type * as astro from "astro";
 import * as encoding from "@oslojs/encoding";
 
 import { setSchedulesJSON } from "@src/schedule";
-import { parseNumberString } from "@src/string";
 
 export async function POST(context: astro.APIContext): Promise<Response> {
 	const secretHeader = context.request.headers.get("Secret");
