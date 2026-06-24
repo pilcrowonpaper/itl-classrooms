@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+    repository_dispatch:
+        types: [deploy]
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+jobs:
+    build-and-deploy:
+        name: Build and deploy
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Configure Pages
+              uses: actions/configure-pages@v4
+
+            - name: Run build.sh
+              env:
+                  DATES_DATA: ${{ github.event.client_payload.dates_json }}
+              run: |
+                  chmod +x ./build.sh
+                  echo "$DATES_DATA" | ./build.sh
+
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: "./dist"
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

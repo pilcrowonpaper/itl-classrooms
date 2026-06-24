@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" style="height: 100%">
+	<head>
+		<meta charset="utf-8" />
+		<link
+			rel="icon"
+			type="image/png"
+			href="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,h_32,q_auto:good,w_32/v1/gcs/platform-data-goog/contentbuilder/GDG_Bevy_Favicon_y29LtMy.png"
+			sizes="32x32"
+		/>
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content="Astro v5.16.4" />
+		<title>iTL 空き教室</title>
+		<meta
+			property="description"
+			content="中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。"
+		/>
+
+		<!-- OpenGraph tags -->
+		<meta property="og:title" content="iTL 空き教室" />
+		<meta
+			property="og:description"
+			content="中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。"
+		/>
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="en" />
+		<meta property="og:site_name" content="iTL 空き教室" />
+		<meta
+			property="og:url"
+			content="https://itl-classrooms.gdgoc-chuo.com"
+		/>
+		<meta
+			property="og:image"
+			content="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,h_256,q_auto:good,w_256/v1/gcs/platform-data-goog/contentbuilder/GDG_Bevy_Favicon_y29LtMy.png"
+		/>
+
+		<!-- Twitter tags -->
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="iTL 空き教室" />
+
+		<link rel="stylesheet" href="/stylesheet.css" />
+	</head>
+	<body>
+		<header>
+			<div id="header-inner">
+				<h1 id="title">iTL 空き教室</h1>
+				<p id="description">
+					中央大学市ヶ谷田町キャンパスの各教室の空き状況を確認できます。データは約10分おきに更新されます。
+				</p>
+				<p id="credit">
+					運営：<a href="https://gdgoc-chuo.com">GDGoC 中央大学</a>
+				</p>
+			</div>
+		</header>
+		<main>
+			<div id="main-inner">
+				<form id="search-form">
+					<input id="date-input" type="date" />
+					<button id="search-button" disabled>検索</button>
+				</form>
+				<div id="availability-placeholder">
+					<div id="availability-placeholder-table">
+						<div id="availability-placeholder-table-loading">
+							<p>データを取得中...</p>
+						</div>
+						<div
+							id="availability-placeholder-table-error"
+							class="hidden"
+						>
+							<p>エラーが発生しました。</p>
+						</div>
+						<div
+							id="availability-placeholder-table-no-data"
+							class="hidden"
+						>
+							<p>データが見つかりませんでした。</p>
+						</div>
+					</div>
+				</div>
+				<div id="availability-success" class="hidden">
+					<div id="availability-table-wrapper">
+						<table id="availability-table">
+							<thead>
+								<tr>
+									<th>教室</th>
+									<th>1限前</th>
+									<th>1限</th>
+									<th>2限</th>
+									<th>教室</th>
+									<th>3限</th>
+									<th>4限</th>
+									<th>5限</th>
+									<th>6限</th>
+									<th>6限後</th>
+								</tr>
+							</thead>
+							<tbody id="availability-table-body"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</main>
+		<script type="module" src="/script.js"></script>
+	</body>
+</html>
