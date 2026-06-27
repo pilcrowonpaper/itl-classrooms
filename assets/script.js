@@ -177,7 +177,9 @@ async function getRoomAvailabilities(year, month, day) {
 		}
 	}
 
-	const response = await fetch("data.json");
+	const promises = [fetch("/data.json"), wait(500)];
+	const results = await Promise.all(promises);
+	const response = results[0];
 	if (response.status !== 200) {
 		await response.body.cancel();
 		throw new Error(`Server returned response status ${response.status}`);
@@ -195,4 +197,8 @@ async function getRoomAvailabilities(year, month, day) {
 	}
 
 	return dates[dateKey];
+}
+
+async function wait(milliseconds) {
+	return new Promise((r) => setTimeout(r, milliseconds));
 }
