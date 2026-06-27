@@ -25,8 +25,19 @@ async function triggerBuild() {
 			const year = date.getFullYear();
 			const month = date.getMonth() + 1;
 			const day = date.getDate();
-			const dateInPast = year <= yearToday && month <= monthToday && day < dayToday;
-			if (dateInPast) {
+
+			let dateInRange = false;
+			if (year === yearToday && month === monthToday && day >= dayToday) {
+				dateInRange = true;
+			}
+			if (year === yearToday && month < 12 && month === monthToday + 1 && day < dayToday) {
+				dateInRange = true;
+			}
+			if (monthToday === 12 && year === yearToday + 1 && month === 1 && day < dayToday) {
+				dateInRange = true;
+			}
+
+			if (!dateInRange) {
 				currentRow++;
 
 				while (currentRow < rows.length && rows[currentRow][2].toString().trim() !== "") {
